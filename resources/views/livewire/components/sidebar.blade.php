@@ -1,9 +1,9 @@
 <div wire:poll.5s="refreshCounts">
     @auth
-        <div x-data="{
+        <div wire:ignore.self x-data="{
             isOpen: false,
             notifOpen: false,
-            prevCount: {{ $pendingCount }},
+            prevCount: $wire.pendingCount,
             soundEnabled: localStorage.getItem('wc_sound') !== 'false',
         
             init() {
@@ -55,7 +55,7 @@
                 }
                 this.prevCount = newCount;
             }
-        }" x-init="init()" x-effect="checkNewOrders({{ $pendingCount }})"
+        }" x-init="init()" x-effect="checkNewOrders($wire.pendingCount)"
             x-on:livewire:navigated.window="isOpen = false">
 
 
@@ -131,7 +131,8 @@
                         <img src="{{ asset('images/logo.jpg') }}" alt="Warso Coffee"
                             style="width:40px; height:40px; border-radius:50%; object-fit:cover; border:2px solid var(--color-lime-500); box-shadow:var(--shadow-hard-sm); flex-shrink:0;">
                         <div style="display:flex; flex-direction:column; min-width:0; line-height:1.2;">
-                            <div class="sidebar-logo-mark" style="white-space:nowrap;">WARSO<span class="accent">. Coffee</span></div>
+                            <div class="sidebar-logo-mark" style="white-space:nowrap;">WARSO<span class="accent">.
+                                    Coffee</span></div>
                             <div class="sidebar-logo-sub">WarungSlow</div>
                         </div>
                     </div>
@@ -140,8 +141,7 @@
                     <div style="position:absolute; bottom:0; right:0; flex-shrink:0;">
                         @can('admin')
                             <button @click="notifOpen = !notifOpen" class="sidebar-bell-btn" title="Notifikasi"
-                                :class="{ 'bell-ring': {{ $pendingCount }} > 0 }"
-                                style="width:26px; height:26px;">
+                                :class="{ 'bell-ring': $wire.pendingCount > 0 }"style="width:26px; height:26px;">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24"
                                     fill="none" stroke="currentColor" stroke-width="2">
                                     <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
