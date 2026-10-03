@@ -24,8 +24,8 @@ class PaymentService
                 'gross_amount' => $order->total_price,
             ],
             'enabled_payments' => [
-                'qris'
-
+                'qris',
+                'gopay' // GoPay di Midtrans pada dasarnya akan memunculkan QRIS juga
             ],
             'customer_details' => [
                 'first_name' => 'Meja ' . $order->table->table_number,
