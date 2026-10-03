@@ -17,20 +17,37 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        // USERS
-        User::create(['role' => 'admin', 'name' => 'Administrator', 'email' => 'admin@gmail.com', 'password' => Hash::make('test123')]);
-        User::create(['role' => 'kepala', 'name' => 'Kepala', 'email' => 'kepala@gmail.com', 'password' => Hash::make('test123')]);
+        // USERS (firstOrCreate: akun yang sudah ada tidak ditimpa)
+        User::firstOrCreate(
+            ['email' => 'admin@gmail.com'],
+            [
+                'role'     => 'admin',
+                'name'     => 'Administrator',
+                'password' => Hash::make(env('ADMIN_PASSWORD', 'test123')),
+            ]
+        );
+        User::firstOrCreate(
+            ['email' => 'kepala@gmail.com'],
+            [
+                'role'     => 'kepala',
+                'name'     => 'Kepala',
+                'password' => Hash::make(env('KEPALA_PASSWORD', 'test123')),
+            ]
+        );
 
         // MEJA
         $tables = [];
-        foreach (['A1','A2','A3','B1','B2','B3','C1','C2'] as $num) {
-            $tables[] = Table::create(['table_number' => $num, 'qr_code_link' => null]);
+        foreach (['A1', 'A2', 'A3', 'B1', 'B2', 'B3', 'C1', 'C2'] as $num) {
+            $tables[] = Table::firstOrCreate(
+                ['table_number' => $num],
+                ['qr_code_link' => null]
+            );
         }
 
         // KATEGORI
         $cats = [];
-        foreach (['Kopi','Non-Kopi','Snack','Minuman Dingin'] as $name) {
-            $cats[$name] = Category::create(['name' => $name]);
+        foreach (['Kopi', 'Non-Kopi', 'Snack', 'Minuman Dingin'] as $name) {
+            $cats[$name] = Category::firstOrCreate(['name' => $name]);
         }
 
         // MENU
@@ -51,50 +68,63 @@ class DatabaseSeeder extends Seeder
             ['category' => 'Minuman Dingin', 'name' => 'Es Kopi Susu',       'price' => 22000],
         ];
 
+        // Stok hanya diisi saat menu pertama kali dibuat, tidak di-reset tiap deploy
         $menus = [];
         foreach ($menuData as $m) {
-            $menus[] = Menu::create([
-                'category_id'  => $cats[$m['category']]->id,
-                'name'         => $m['name'],
-                'description'  => $m['name'] . ' - menu andalan Warso Coffee.',
-                'price'        => $m['price'],
-                'is_available' => true,
-                'is_active'    => true,
-                'stock'        => rand(20, 50),
-            ]);
+            $menus[] = Menu::firstOrCreate(
+                ['name' => $m['name']],
+                [
+                    'category_id'  => $cats[$m['category']]->id,
+                    'description'  => $m['name'] . ' - menu andalan Warso Coffee.',
+                    'price'        => $m['price'],
+                    'is_available' => true,
+                    'is_active'    => true,
+                    'stock'        => rand(20, 50),
+                ]
+            );
+        }
+
+        // Order dummy hanya dibuat sekali, saat tabel orders masih kosong
+        if (Order::count() > 0) {
+            return;
         }
 
         // ORDERS - 7 hari terakhir
-        $temps   = ['Hot', 'Ice'];
-        $ices    = ['Normal', 'Less Ice', 'No Ice'];
-        $sugars  = ['Normal', 'Less Sugar', 'No Sugar'];
-        $pays    = ['cash', 'qris', 'transfer'];
-        $hours   = [8,9,10,11,12,13,14,15,16,17,18,19,20,21];
+        $temps  = ['Hot', 'Ice'];
+        $ices   = ['Normal', 'Less Ice', 'No Ice'];
+        $sugars = ['Normal', 'Less Sugar', 'No Sugar'];
+        $pays   = ['cash', 'qris', 'transfer'];
+        $hours  = [8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21];
 
-        $dist = [0=>14, 1=>9, 2=>11, 3=>7, 4=>10, 5=>8, 6=>6];
+        $dist = [0 => 14, 1 => 9, 2 => 11, 3 => 7, 4 => 10, 5 => 8, 6 => 6];
 
         foreach ($dist as $daysAgo => $count) {
             $date = Carbon::today()->subDays($daysAgo);
             for ($i = 0; $i < $count; $i++) {
-                $t  = $date->copy()->setTime($hours[array_rand($hours)], rand(0,59), 0);
+                $t  = $date->copy()->setTime($hours[array_rand($hours)], rand(0, 59), 0);
                 $tb = $tables[array_rand($tables)];
 
                 $n    = rand(1, min(3, count($menus)));
                 $keys = array_rand($menus, $n);
-                if (!is_array($keys)) $keys = [$keys];
+                if (!is_array($keys)) {
+                    $keys = [$keys];
+                }
 
                 $total = 0;
                 $items = [];
                 foreach ($keys as $k) {
                     $qty = rand(1, 3);
                     $total += $menus[$k]->price * $qty;
-                    $items[] = ['menu' => $menus[$k], 'qty' => $qty,
+                    $items[] = [
+                        'menu' => $menus[$k],
+                        'qty'  => $qty,
                         'temp' => $temps[array_rand($temps)],
                         'ice'  => $ices[array_rand($ices)],
-                        'sug'  => $sugars[array_rand($sugars)]];
+                        'sug'  => $sugars[array_rand($sugars)],
+                    ];
                 }
 
-                $paid = ($daysAgo > 0) ? true : (rand(1,10) > 2);
+                $paid = ($daysAgo > 0) ? true : (rand(1, 10) > 2);
 
                 $order = Order::create([
                     'order_code'     => 'ORD-' . strtoupper(Str::random(6)),
