@@ -125,17 +125,24 @@
             {{-- ══ SIDEBAR ══ --}}
             <aside class="sidebar" :class="isOpen ? 'open' : ''" id="main-sidebar">
 
-                <div class="sidebar-header">
-                    <div>
-                        <div class="sidebar-logo-mark">WARSO<span class="accent">. Coffee</span></div>
-                        <div class="sidebar-logo-sub">WarungSlow </div>
+                <div class="sidebar-header" style="align-items:flex-start; position:relative;">
+                    {{-- Logo + brand teks --}}
+                    <div style="display:flex; align-items:center; gap:10px; flex:1; min-width:0;">
+                        <img src="{{ asset('storage/asset/logo.jpg') }}" alt="Warso Coffee"
+                            style="width:40px; height:40px; border-radius:50%; object-fit:cover; border:2px solid var(--color-lime-500); box-shadow:var(--shadow-hard-sm); flex-shrink:0;">
+                        <div style="display:flex; flex-direction:column; min-width:0; line-height:1.2;">
+                            <div class="sidebar-logo-mark" style="white-space:nowrap;">WARSO<span class="accent">. Coffee</span></div>
+                            <div class="sidebar-logo-sub">WarungSlow</div>
+                        </div>
                     </div>
-                    {{-- Bell --}}
-                    <div style="position:relative; flex-shrink:0;">
+
+                    {{-- Bell: absolut pojok kanan bawah --}}
+                    <div style="position:absolute; bottom:0; right:0; flex-shrink:0;">
                         @can('admin')
                             <button @click="notifOpen = !notifOpen" class="sidebar-bell-btn" title="Notifikasi"
-                                :class="{ 'bell-ring': {{ $pendingCount }} > 0 }">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24"
+                                :class="{ 'bell-ring': {{ $pendingCount }} > 0 }"
+                                style="width:26px; height:26px;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24"
                                     fill="none" stroke="currentColor" stroke-width="2">
                                     <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
                                     <path d="M13.73 21a2 2 0 0 1-3.46 0" />
@@ -147,6 +154,8 @@
                         @endcan
                     </div>
                 </div>
+
+
 
                 <nav class="sidebar-nav">
                     @can('kepala')
