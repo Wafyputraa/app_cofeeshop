@@ -28,7 +28,7 @@
 
     <section class="hero-toko relative px-4 pt-14 pb-16 sm:pt-20 sm:pb-24"
         style="
-        background-image: url('{{ asset('storage/asset/toko.jpeg') }}');
+        background-image: url('{{ asset('images/toko.jpeg') }}');
         
         /* ATUR ZOOM DI SINI (vw = persentase lebar layar) */
         /* Makin kecil angkanya (misal 30vw), gambar makin menjauh/zoom-out */
@@ -51,7 +51,7 @@
 
             {{-- logo kecil + identitas sistem --}}
             <div class="flex items-center gap-3 mb-8 animate-fade-up">
-                <img src="{{ asset('storage/asset/logo.jpg') }}" alt="Warso Coffee"
+                <img src="{{ asset('images/logo.jpg') }}" alt="Warso Coffee"
                     class="w-12 h-12 rounded-md object-cover border-2"
                     style="border-color: var(--color-lime-500); box-shadow: var(--shadow-hard-sm);">
                 <div class="leading-none">
@@ -298,7 +298,7 @@
                 @foreach ($menus as $i => $menu)
                     <div class="card-menu animate-fade-up stagger-{{ min($i + 1, 6) }}">
                         <div class="relative">
-                            <img src="{{ $menu->image ? asset('storage/' . $menu->image) : asset('storage/asset/logo.jpg') }}"
+                            <img src="{{ $menu->image ? asset('storage/' . $menu->image) : asset('images/logo.jpg') }}"
                                 alt="{{ $menu->name }}" class="w-full h-36 object-cover"
                                 style="background: var(--color-ink-700);">
 

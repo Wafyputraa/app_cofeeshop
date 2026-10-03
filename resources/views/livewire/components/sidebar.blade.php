@@ -128,7 +128,7 @@
                 <div class="sidebar-header" style="align-items:flex-start; position:relative;">
                     {{-- Logo + brand teks --}}
                     <div style="display:flex; align-items:center; gap:10px; flex:1; min-width:0;">
-                        <img src="{{ asset('storage/asset/logo.jpg') }}" alt="Warso Coffee"
+                        <img src="{{ asset('images/logo.jpg') }}" alt="Warso Coffee"
                             style="width:40px; height:40px; border-radius:50%; object-fit:cover; border:2px solid var(--color-lime-500); box-shadow:var(--shadow-hard-sm); flex-shrink:0;">
                         <div style="display:flex; flex-direction:column; min-width:0; line-height:1.2;">
                             <div class="sidebar-logo-mark" style="white-space:nowrap;">WARSO<span class="accent">. Coffee</span></div>
